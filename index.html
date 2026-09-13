@@ -5,6 +5,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <script>
+    if (localStorage.getItem('auth') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+
   <h1>Shepherd Budget</h1>
 
   <label>Total Monthly Income:</label>
