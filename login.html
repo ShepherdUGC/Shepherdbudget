@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body { font-family: Arial; max-width: 400px; margin: auto; padding: 40px; }
+    input { padding: 10px; width: 100%; margin-top: 10px; }
+    button { padding: 10px; width: 100%; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Enter Password</h2>
+  <input id="pw" type="password" placeholder="Password">
+  <button onclick="login()">Submit</button>
+
+  <script>
+    function login() {
+      const pw = document.getElementById('pw').value;
+      if (pw === 'shepherd2026') {
+        localStorage.setItem('auth', 'true');
+        window.location.href = 'index.html';
+      } else {
+        alert('Incorrect password');
+      }
+    }
+  </script>
+</body>
+</html>
