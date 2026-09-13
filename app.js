@@ -47,3 +47,32 @@ function updateAmount(index, value) {
 document.getElementById("addBtn").onclick = addCategory;
 
 render();
+
+const recommended = {
+  "Rent / Mortgage": [25, 35],
+  "Electric": [2, 5],
+  "Gas (utility)": [1, 3],
+  "Water": [1, 2],
+  "Trash": [0.5, 1],
+  "Internet": [1, 3],
+  "Phone": [2, 4],
+  "Insurance": [5, 10],
+  "Groceries": [8, 15],
+  "Gas (car)": [3, 8],
+  "Household supplies": [1, 3],
+  "Personal care": [1, 3],
+  "Eating out": [3, 8],
+  "Entertainment": [2, 6],
+  "Clothing": [2, 5],
+  "Subscriptions": [1, 3],
+  "Hobbies": [1, 4],
+  "Savings": [5, 10],
+  "Investments": [5, 10],
+  "Extra debt payments": [5, 10],
+  "Emergency fund": [3, 5],
+  "Car maintenance": [2, 4],
+  "Car registration": [0.5, 1],
+  "Medical": [2, 5],
+  "Gifts": [1, 3],
+  "Travel": [2, 5]
+};
