@@ -5,11 +5,32 @@ body {
   padding: 20px;
 }
 
-input {
-  margin: 5px;
-  padding: 5px;
+h1, h2 {
+  text-align: center;
 }
 
-div {
+.input-section {
+  margin-bottom: 20px;
+}
+
+input, select, button {
+  padding: 10px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.green {
+  color: green;
+  font-weight: bold;
+}
+
+.red {
+  color: red;
+  font-weight: bold;
+}
+
+.summary-item {
   margin-bottom: 10px;
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
 }
