@@ -1,53 +1,7 @@
-let categories = JSON.parse(localStorage.getItem("categories")) || [];
+let income = 0;
+let categories = [];
 
-function save() {
-  localStorage.setItem("categories", JSON.stringify(categories));
-}
-
-function addCategory() {
-  const name = prompt("Category name:");
-  if (!name) return;
-  categories.push({ name, amount: 0 });
-  save();
-  render();
-}
-
-function render() {
-  const income = Number(document.getElementById("income").value);
-  const catDiv = document.getElementById("categories");
-  const summaryDiv = document.getElementById("summary");
-
-  catDiv.innerHTML = "";
-  summaryDiv.innerHTML = "";
-
-  categories.forEach((cat, i) => {
-    const row = document.createElement("div");
-    row.innerHTML = `
-      <strong>${cat.name}</strong>
-      <input type="number" value="${cat.amount}" 
-        onchange="updateAmount(${i}, this.value)">
-    `;
-    catDiv.appendChild(row);
-  });
-
-  if (income > 0) {
-    categories.forEach(cat => {
-      const pct = ((cat.amount / income) * 100).toFixed(1);
-      summaryDiv.innerHTML += `<p>${cat.name}: ${pct}%</p>`;
-    });
-  }
-}
-
-function updateAmount(index, value) {
-  categories[index].amount = Number(value);
-  save();
-  render();
-}
-
-document.getElementById("addBtn").onclick = addCategory;
-
-render();
-
+// Recommended percentage ranges
 const recommended = {
   "Rent / Mortgage": [25, 35],
   "Electric": [2, 5],
@@ -76,3 +30,69 @@ const recommended = {
   "Gifts": [1, 3],
   "Travel": [2, 5]
 };
+
+// Populate dropdown with categories
+const categorySelect = document.getElementById("categorySelect");
+Object.keys(recommended).forEach(cat => {
+  const option = document.createElement("option");
+  option.value = cat;
+  option.textContent = cat;
+  categorySelect.appendChild(option);
+});
+
+function setIncome() {
+  income = parseFloat(document.getElementById("incomeInput").value);
+  render();
+}
+
+function addCategory() {
+  const name = document.getElementById("categorySelect").value;
+  const amount = parseFloat(document.getElementById("amountInput").value);
+
+  if (!amount || amount <= 0) return;
+
+  categories.push({ name, amount });
+  render();
+}
+
+function render() {
+  const summaryDiv = document.getElementById("summary");
+  summaryDiv.innerHTML = "";
+
+  if (income <= 0) {
+    summaryDiv.innerHTML = "<p>Please enter your income.</p>";
+    return;
+  }
+
+  categories.forEach(cat => {
+    const pct = ((cat.amount / income) * 100).toFixed(1);
+    const range = recommended[cat.name];
+
+    let statusClass = "";
+    let statusText = "";
+
+    if (range) {
+      const [min, max] = range;
+
+      if (pct < min) {
+        statusClass = "green";
+        statusText = "Below recommended";
+      } else if (pct > max) {
+        statusClass = "red";
+        statusText = "Above recommended";
+      } else {
+        statusClass = "green";
+        statusText = "Within recommended";
+      }
+    }
+
+    summaryDiv.innerHTML += `
+      <div class="summary-item ${statusClass}">
+        <strong>${cat.name}</strong><br>
+        ${pct}% of income<br>
+        Recommended: ${range[0]}–${range[1]}%<br>
+        Status: ${statusText}
+      </div>
+    `;
+  });
+}
