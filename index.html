@@ -5,6 +5,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- Password Gate -->
   <script>
     if (localStorage.getItem('auth') !== 'true') {
       window.location.href = 'login.html';
@@ -13,13 +15,18 @@
 
   <h1>Shepherd Budget</h1>
 
-  <label>Total Monthly Income:</label>
-  <input id="income" type="number" placeholder="Enter total income">
+  <div class="input-section">
+    <label>Monthly Income:</label>
+    <input type="number" id="incomeInput" placeholder="Enter income">
+    <button onclick="setIncome()">Set Income</button>
+  </div>
 
-  <h2>Categories</h2>
-  <div id="categories"></div>
-
-  <button id="addBtn">Add Category</button>
+  <div class="input-section">
+    <label>Add Category:</label>
+    <select id="categorySelect"></select>
+    <input type="number" id="amountInput" placeholder="Amount">
+    <button onclick="addCategory()">Add</button>
+  </div>
 
   <h2>Summary</h2>
   <div id="summary"></div>
