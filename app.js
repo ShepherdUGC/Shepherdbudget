@@ -1,6 +1,7 @@
 let income = 0;
 let categories = [];
 
+// Recommended percentage ranges (updated to your real fixed expenses)
 const recommended = {
   // FIXED ESSENTIALS (your real expenses)
   "Rent / Mortgage": [45, 55],
@@ -35,6 +36,7 @@ const recommended = {
   "Gifts": [1, 3],
   "Travel": [2, 5]
 };
+
 // Populate dropdown with categories
 const categorySelect = document.getElementById("categorySelect");
 Object.keys(recommended).forEach(cat => {
@@ -60,11 +62,13 @@ function addCategory() {
 }
 
 function render() {
-  const summaryDiv = document.getElementById("summary");
-  summaryDiv.innerHTML = "";
+  const tableBody = document.getElementById("tableBody");
+  tableBody.innerHTML = "";
 
   if (income <= 0) {
-    summaryDiv.innerHTML = "<p>Please enter your income.</p>";
+    tableBody.innerHTML = `
+      <tr><td colspan="5">Please enter your income.</td></tr>
+    `;
     return;
   }
 
@@ -90,13 +94,14 @@ function render() {
       }
     }
 
-    summaryDiv.innerHTML += `
-      <div class="summary-item ${statusClass}">
-        <strong>${cat.name}</strong><br>
-        ${pct}% of income<br>
-        Recommended: ${range[0]}–${range[1]}%<br>
-        Status: ${statusText}
-      </div>
+    tableBody.innerHTML += `
+      <tr>
+        <td>${cat.name}</td>
+        <td>$${cat.amount.toFixed(2)}</td>
+        <td>${pct}%</td>
+        <td>${range[0]}–${range[1]}%</td>
+        <td class="${statusClass}">${statusText}</td>
+      </tr>
     `;
   });
 }
