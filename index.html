@@ -16,6 +16,11 @@
   <h1>Shepherd Budget</h1>
 
   <div class="input-section">
+    <label>Select Month:</label>
+    <select id="monthSelect" onchange="changeMonth()"></select>
+  </div>
+
+  <div class="input-section">
     <label>Monthly Income:</label>
     <input type="number" id="incomeInput" placeholder="Enter income">
     <button onclick="setIncome()">Set Income</button>
@@ -52,11 +57,6 @@
       </tr>
     </tfoot>
   </table>
-
-  <script src="app.js"></script>
-</body>
-</html>
-
 
   <script src="app.js"></script>
 </body>
