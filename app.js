@@ -1,7 +1,7 @@
 let income = 0;
 let categories = [];
 
-// Recommended percentage ranges (updated to your real fixed expenses)
+// Recommended percentage ranges (updated to your real fixed expenses + tithing)
 const recommended = {
   // FIXED ESSENTIALS (your real expenses)
   "Rent / Mortgage": [45, 55],
@@ -9,6 +9,9 @@ const recommended = {
   "Gas (utility)": [2, 5],
   "Internet": [2, 4],
   "Insurance": [8, 12],
+
+  // TITHING
+  "Tithing": [10, 10],
 
   // VARIABLE ESSENTIALS
   "Groceries": [8, 15],
@@ -48,6 +51,16 @@ Object.keys(recommended).forEach(cat => {
 
 function setIncome() {
   income = parseFloat(document.getElementById("incomeInput").value);
+
+  // Auto-add tithing at 10%
+  const tithingAmount = income * 0.10;
+
+  // Remove old tithing if it exists
+  categories = categories.filter(c => c.name !== "Tithing");
+
+  // Add updated tithing
+  categories.push({ name: "Tithing", amount: tithingAmount });
+
   render();
 }
 
@@ -72,6 +85,8 @@ function render() {
     return;
   }
 
+  let totalSpent = 0;
+
   categories.forEach(cat => {
     const pct = ((cat.amount / income) * 100).toFixed(1);
     const range = recommended[cat.name];
@@ -83,7 +98,7 @@ function render() {
       const [min, max] = range;
 
       if (pct < min) {
-        statusClass = "green";
+        statusClass = "red";
         statusText = "Below recommended";
       } else if (pct > max) {
         statusClass = "red";
@@ -93,6 +108,8 @@ function render() {
         statusText = "Within recommended";
       }
     }
+
+    totalSpent += cat.amount;
 
     tableBody.innerHTML += `
       <tr>
@@ -104,4 +121,13 @@ function render() {
       </tr>
     `;
   });
+
+  // TOTAL BAR
+  const totalPercent = ((totalSpent / income) * 100).toFixed(1);
+  const remaining = income - totalSpent;
+
+  document.getElementById("totalAmount").innerText = `$${totalSpent.toFixed(2)}`;
+  document.getElementById("totalPercent").innerText = `${totalPercent}%`;
+  document.getElementById("remainingIncome").innerText =
+    `Remaining Income: $${remaining.toFixed(2)}`;
 }
