@@ -93,7 +93,7 @@ function render() {
       const [min, max] = range;
 
       if (pct < min) {
-        statusClass = "red";
+        statusClass = "green";
         statusText = "Below recommended";
       } else if (pct > max) {
         statusClass = "red";
