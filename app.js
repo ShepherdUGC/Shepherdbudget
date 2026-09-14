@@ -1,7 +1,8 @@
+let currentMonth = "";
 let income = 0;
 let categories = [];
 
-// Recommended percentage ranges (updated to your real fixed expenses + tithing)
+// Recommended percentage ranges
 const recommended = {
   // FIXED ESSENTIALS (your real expenses)
   "Rent / Mortgage": [45, 55],
@@ -10,7 +11,7 @@ const recommended = {
   "Internet": [2, 4],
   "Insurance": [8, 12],
 
-  // TITHING (manual input now)
+  // TITHING
   "Tithing": [10, 10],
 
   // VARIABLE ESSENTIALS
@@ -40,7 +41,7 @@ const recommended = {
   "Travel": [2, 5]
 };
 
-// Populate dropdown with categories
+// Populate category dropdown
 const categorySelect = document.getElementById("categorySelect");
 Object.keys(recommended).forEach(cat => {
   const option = document.createElement("option");
@@ -49,8 +50,68 @@ Object.keys(recommended).forEach(cat => {
   categorySelect.appendChild(option);
 });
 
+// Month dropdown
+const monthSelect = document.getElementById("monthSelect");
+const monthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+function initMonths() {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonthIndex = now.getMonth();
+
+  for (let i = 0; i < 12; i++) {
+    const value = `${currentYear}-${String(i + 1).padStart(2, "0")}`;
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = `${monthNames[i]} ${currentYear}`;
+    monthSelect.appendChild(option);
+  }
+
+  const defaultValue = `${currentYear}-${String(currentMonthIndex + 1).padStart(2, "0")}`;
+  monthSelect.value = defaultValue;
+  currentMonth = defaultValue;
+
+  loadMonthData();
+}
+
+function changeMonth() {
+  currentMonth = monthSelect.value;
+  loadMonthData();
+}
+
+function getStorageKey() {
+  return `budget_${currentMonth}`;
+}
+
+function loadMonthData() {
+  const key = getStorageKey();
+  const saved = localStorage.getItem(key);
+
+  if (saved) {
+    const data = JSON.parse(saved);
+    income = data.income || 0;
+    categories = data.categories || [];
+  } else {
+    income = 0;
+    categories = [];
+  }
+
+  document.getElementById("incomeInput").value = income || "";
+  render();
+}
+
+function saveMonthData() {
+  const key = getStorageKey();
+  const data = { income, categories };
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
 function setIncome() {
-  income = parseFloat(document.getElementById("incomeInput").value);
+  income = parseFloat(document.getElementById("incomeInput").value) || 0;
+  saveMonthData();
   render();
 }
 
@@ -61,11 +122,14 @@ function addCategory() {
   if (!amount || amount <= 0) return;
 
   categories.push({ name, amount });
+  document.getElementById("amountInput").value = "";
+  saveMonthData();
   render();
 }
 
 function deleteCategory(index) {
   categories.splice(index, 1);
+  saveMonthData();
   render();
 }
 
@@ -75,8 +139,12 @@ function render() {
 
   if (income <= 0) {
     tableBody.innerHTML = `
-      <tr><td colspan="6">Please enter your income.</td></tr>
+      <tr><td colspan="6">Please enter your income for this month.</td></tr>
     `;
+    document.getElementById("totalAmount").innerText = "$0.00";
+    document.getElementById("totalPercent").innerText = "0%";
+    document.getElementById("remainingIncome").innerText =
+      `Remaining Income: $0.00`;
     return;
   }
 
@@ -93,7 +161,7 @@ function render() {
       const [min, max] = range;
 
       if (pct < min) {
-        statusClass = "green";
+        statusClass = "red";
         statusText = "Below recommended";
       } else if (pct > max) {
         statusClass = "red";
@@ -111,14 +179,13 @@ function render() {
         <td>${cat.name}</td>
         <td>$${cat.amount.toFixed(2)}</td>
         <td>${pct}%</td>
-        <td>${range[0]}–${range[1]}%</td>
+        <td>${range ? `${range[0]}–${range[1]}%` : "N/A"}</td>
         <td class="${statusClass}">${statusText}</td>
         <td><button class="delete-btn" onclick="deleteCategory(${index})">Delete</button></td>
       </tr>
     `;
   });
 
-  // TOTAL BAR
   const totalPercent = ((totalSpent / income) * 100).toFixed(1);
   const remaining = income - totalSpent;
 
@@ -127,3 +194,6 @@ function render() {
   document.getElementById("remainingIncome").innerText =
     `Remaining Income: $${remaining.toFixed(2)}`;
 }
+
+// Initialize
+initMonths();
