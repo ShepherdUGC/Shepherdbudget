@@ -74,20 +74,25 @@ function addCategory() {
   render();
 }
 
+function deleteCategory(index) {
+  categories.splice(index, 1);
+  render();
+}
+
 function render() {
   const tableBody = document.getElementById("tableBody");
   tableBody.innerHTML = "";
 
   if (income <= 0) {
     tableBody.innerHTML = `
-      <tr><td colspan="5">Please enter your income.</td></tr>
+      <tr><td colspan="6">Please enter your income.</td></tr>
     `;
     return;
   }
 
   let totalSpent = 0;
 
-  categories.forEach(cat => {
+  categories.forEach((cat, index) => {
     const pct = ((cat.amount / income) * 100).toFixed(1);
     const range = recommended[cat.name];
 
@@ -118,6 +123,7 @@ function render() {
         <td>${pct}%</td>
         <td>${range[0]}–${range[1]}%</td>
         <td class="${statusClass}">${statusText}</td>
+        <td><button class="delete-btn" onclick="deleteCategory(${index})">Delete</button></td>
       </tr>
     `;
   });
